@@ -267,7 +267,14 @@ global_tlsext_servername_callback(const SSL *ssl, int *alert, void *arg) {
     argv = Py_BuildValue("(O)", (PyObject *)conn);
     ret = PyEval_CallObject(conn->context->tlsext_servername_callback, argv);
     Py_DECREF(argv);
-    Py_DECREF(ret);
+    if (ret == NULL) {
+        /*
+         * XXX - This should be reported somehow. -exarkun
+         */
+        PyErr_Clear();
+    } else {
+        Py_DECREF(ret);
+    }
 
     /*
      * This function is returning into OpenSSL.  Release the GIL again.
