@@ -25,11 +25,12 @@ def createKeyPair(type, bits):
     pkey.generate_key(type, bits)
     return pkey
 
-def createCertRequest(pkey, digest="md5", **name):
+def createCertRequest(pkey, data, digest="md5", **name):
     """
     Create a certificate request.
 
     Arguments: pkey   - The key to associate with the request
+               data   - The data to be signed
                digest - Digestion method to use for signing, default is md5
                **name - The name of the subject of the request, possible
                         arguments are:
@@ -49,7 +50,7 @@ def createCertRequest(pkey, digest="md5", **name):
         setattr(subj, key, value)
 
     req.set_pubkey(pkey)
-    req.sign(pkey, digest)
+    req.sign(pkey, data, digest)
     return req
 
 def createCertificate(req, (issuerCert, issuerKey), serial, (notBefore, notAfter), digest="md5"):
